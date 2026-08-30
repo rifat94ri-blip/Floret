@@ -1,0 +1,9 @@
+{
+  "name": "Rifat Business Manager",
+  "short_name": "Rifat Manager",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#111827",
+  "description": "Order, customer, product, stock and profit manager"
+}

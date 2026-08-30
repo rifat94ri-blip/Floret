@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rifat Manager">
+<title>Rifat Business Manager V1</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#111827;color:#fff;padding:18px 16px}.wrap{max-width:760px;margin:auto}
+h1{font-size:21px;margin:0}.sub{font-size:12px;opacity:.7;margin-top:3px}
+nav{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;overflow:auto;padding:8px;gap:7px}
+nav button{border:0;border-radius:20px;padding:10px 14px;white-space:nowrap;font-weight:700;background:#f1f5f9}
+nav button.active{background:#111827;color:white}
+main{padding:14px}.page{display:none}.page.active{display:block}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:15px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{font-size:24px;font-weight:800;margin-top:4px}.muted{color:#64748b;font-size:12px}
+label{display:block;font-size:13px;font-weight:700;margin:9px 0 5px}input,select,textarea{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid #dbe1e8;border-radius:11px;background:#fff}
+button.primary{width:100%;border:0;border-radius:11px;padding:13px;background:#111827;color:#fff;font-weight:800;font-size:15px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.item{padding:12px 0;border-bottom:1px solid #edf0f3}.item:last-child{border:0}
+.status{font-size:11px;padding:5px 8px;border-radius:999px;background:#eef2ff}.danger{color:#b91c1c}.success{color:#047857}
+.search{margin-bottom:10px}.empty{text-align:center;color:#64748b;padding:25px 5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{border:1px solid #dbe1e8;background:white;padding:9px 11px;border-radius:9px;font-weight:700}
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.metric{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Rifat Business Manager</h1><div class="sub">Order • Customer • Product • Stock • Profit</div></div></header>
+<nav id="nav">
+<button class="active" data-page="dashboard">Dashboard</button>
+<button data-page="orders">Orders</button>
+<button data-page="customers">Customers</button>
+<button data-page="products">Products</button>
+<button data-page="add">+ Order</button>
+</nav>
+
+<main class="wrap">
+<section id="dashboard" class="page active">
+<div class="grid">
+<div class="card"><div class="muted">Total Sales</div><div class="metric" id="mSales">৳0</div></div>
+<div class="card"><div class="muted">Gross Profit</div><div class="metric" id="mProfit">৳0</div></div>
+<div class="card"><div class="muted">Orders</div><div class="metric" id="mOrders">0</div></div>
+<div class="card"><div class="muted">Customers</div><div class="metric" id="mCustomers">0</div></div>
+</div>
+<div class="card"><h2>Today's Action</h2><div id="actions"></div></div>
+<div class="card"><h2>Recent Orders</h2><div id="recent"></div></div>
+</section>
+
+<section id="add" class="page">
+<div class="card"><h2>নতুন অর্ডার</h2>
+<label>Customer name</label><input id="cName" required>
+<label>Phone</label><input id="cPhone" required inputmode="tel">
+<label>Address</label><textarea id="cAddress" rows="2" required></textarea>
+<label>Product</label><select id="oProduct"></select>
+<div class="grid"><div><label>Color</label><input id="oColor"></div><div><label>Size</label><input id="oSize"></div></div>
+<div class="grid"><div><label>Price</label><input id="oPrice" type="number" min="0"></div><div><label>Quantity</label><input id="oQty" type="number" min="1" value="1"></div></div>
+<div class="grid"><div><label>Delivery charge</label><input id="oDelivery" type="number" min="0" value="80"></div><div><label>Discount</label><input id="oDiscount" type="number" min="0" value="0"></div></div>
+<div class="card" style="background:#f8fafc;margin-top:12px"><div class="row"><span>Product total</span><b id="oSub">৳0</b></div><div class="row" style="font-size:18px;margin-top:7px"><span>Grand Total</span><b id="oGrand">৳0</b></div></div>
+<button class="primary" id="saveOrder">অর্ডার সেভ করুন</button><p id="orderMsg" class="success" aria-live="polite"></p>
+</div>
+</section>
+
+<section id="orders" class="page">
+<div class="card"><h2>Orders</h2><input class="search" id="orderSearch" placeholder="Name / phone / product দিয়ে খুঁজুন"><div id="orderList"></div></div>
+</section>
+
+<section id="customers" class="page">
+<div class="card"><h2>Customers</h2><input class="search" id="customerSearch" placeholder="Customer বা phone"><div id="customerList"></div></div>
+</section>
+
+<section id="products" class="page">
+<div class="card"><h2>Add Product</h2>
+<label>Product name</label><input id="pName">
+<div class="grid"><div><label>Cost price</label><input id="pCost" type="number" min="0"></div><div><label>Selling price</label><input id="pSell" type="number" min="0"></div></div>
+<label>Stock</label><input id="pStock" type="number" min="0" value="0">
+<button class="primary" id="saveProduct">Product Save</button>
+</div>
+<div class="card"><h2>Product List</h2><div id="productList"></div></div>
+</section>
+</main>
+
+<script>
+(()=>{const root=document.body;if(root.dataset.ready)return;root.dataset.ready='1';
+let products=JSON.parse(localStorage.getItem('rbm_products_v1')||'[]');
+let orders=JSON.parse(localStorage.getItem('rbm_orders_v1')||'[]');
+const $=id=>document.getElementById(id), money=n=>'৳'+Math.round(Number(n)||0).toLocaleString('en-BD');
+function save(){localStorage.setItem('rbm_products_v1',JSON.stringify(products));localStorage.setItem('rbm_orders_v1',JSON.stringify(orders));render()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function calc(){let p=Math.max(0,+$('oPrice').value||0),q=Math.max(1,+$('oQty').value||1),d=Math.max(0,+$('oDelivery').value||0),x=Math.max(0,+$('oDiscount').value||0);$('oSub').textContent=money(p*q);$('oGrand').textContent=money(Math.max(0,p*q+d-x))}
+function refreshProductSelect(){ $('oProduct').innerHTML=products.length?products.map(p=>`<option value="${p.id}">${esc(p.name)} — ${money(p.sell)} — Stock ${p.stock}</option>`).join(''):'<option value="">আগে Product যোগ করুন</option>'; let p=products.find(x=>x.id==$('oProduct').value);if(p)$('oPrice').value=p.sell;calc()}
+$('oProduct').addEventListener('change',()=>{let p=products.find(x=>x.id==$('oProduct').value);if(p)$('oPrice').value=p.sell;calc()});
+['oPrice','oQty','oDelivery','oDiscount'].forEach(id=>$(id).addEventListener('input',calc));
+$('saveProduct').addEventListener('click',()=>{let n=$('pName').value.trim(),c=Math.max(0,+$('pCost').value||0),s=Math.max(0,+$('pSell').value||0),st=Math.max(0,+$('pStock').value||0);if(!n||!s){alert('Product name ও selling price দিন');return}products.push({id:Date.now(),name:n,cost:c,sell:s,stock:st});$('pName').value=$('pCost').value=$('pSell').value='';$('pStock').value=0;save()});
+$('saveOrder').addEventListener('click',()=>{let name=$('cName').value.trim(),phone=$('cPhone').value.trim(),address=$('cAddress').value.trim(),pid=+$('oProduct').value,p=products.find(x=>x.id===pid),q=Math.max(1,+$('oQty').value||1),price=Math.max(0,+$('oPrice').value||0),delivery=Math.max(0,+$('oDelivery').value||0),discount=Math.max(0,+$('oDiscount').value||0);if(!name||!phone||!address||!p){alert('Customer ও Product তথ্য পূরণ করুন');return}if(p.stock<q){alert('এই Product-এর stock যথেষ্ট নেই');return}orders.unshift({id:'ORD-'+Date.now().toString().slice(-7),date:new Date().toISOString(),name,phone,address,product:p.name,pid,color:$('oColor').value.trim(),size:$('oSize').value.trim(),qty:q,price,cost:p.cost*q,subtotal:price*q,delivery,discount,total:Math.max(0,price*q+delivery-discount),status:'New'});p.stock-=q;$('cName').value=$('cPhone').value=$('cAddress').value=$('oColor').value=$('oSize').value='';$('oQty').value=1;$('oDiscount').value=0;$('orderMsg').textContent='অর্ডার সেভ হয়েছে ✓';save();setTimeout(()=>$('orderMsg').textContent='',1800)});
+function statusChange(i,v){orders[i].status=v;save()}
+function renderOrders(){let q=$('orderSearch').value.toLowerCase();let arr=orders.filter(o=>[o.name,o.phone,o.product,o.status].join(' ').toLowerCase().includes(q));$('orderList').innerHTML=arr.length?arr.map(o=>{let i=orders.indexOf(o);return `<div class="item"><div class="row"><b>${esc(o.name)}</b><b>${money(o.total)}</b></div><div class="muted">${esc(o.product)} • ${esc(o.color)} • Qty ${o.qty}</div><div class="muted">${esc(o.phone)} • ${esc(o.address)}</div><div class="actions" style="margin-top:8px"><select data-status="${i}"><option ${o.status==='New'?'selected':''}>New</option><option ${o.status==='Confirmed'?'selected':''}>Confirmed</option><option ${o.status==='Processing'?'selected':''}>Processing</option><option ${o.status==='Packed'?'selected':''}>Packed</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option ${o.status==='Delivered'?'selected':''}>Delivered</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select></div></div>`}).join(''):'<div class="empty">কোনো order পাওয়া যায়নি</div>';$('orderList').querySelectorAll('[data-status]').forEach(x=>x.addEventListener('change',e=>statusChange(+e.target.dataset.status,e.target.value)))}
+function renderCustomers(){let q=$('customerSearch').value.toLowerCase(),map={};orders.forEach(o=>{let k=o.phone;if(!map[k])map[k]={name:o.name,phone:o.phone,address:o.address,count:0,spent:0};map[k].count++;map[k].spent+=o.total});let arr=Object.values(map).filter(x=>(x.name+' '+x.phone).toLowerCase().includes(q));$('customerList').innerHTML=arr.length?arr.map(x=>`<div class="item"><div class="row"><b>${esc(x.name)}</b><b>${money(x.spent)}</b></div><div class="muted">${esc(x.phone)} • ${x.count} orders</div><div class="muted">${esc(x.address)}</div></div>`).join(''):'<div class="empty">Customer নেই</div>'}
+function renderProducts(){$('productList').innerHTML=products.length?products.map(p=>`<div class="item"><div class="row"><b>${esc(p.name)}</b><span class="status">${p.stock} pcs</span></div><div class="muted">Cost ${money(p.cost)} • Sell ${money(p.sell)} • Unit profit ${money(p.sell-p.cost)}</div></div>`).join(''):'<div class="empty">Product নেই</div>'}
+function render(){let sales=orders.reduce((s,o)=>s+o.total,0),profit=orders.reduce((s,o)=>s+(o.subtotal-o.cost-o.discount),0);$('mSales').textContent=money(sales);$('mProfit').textContent=money(profit);$('mOrders').textContent=orders.length;$('mCustomers').textContent=new Set(orders.map(o=>o.phone)).size;let pending=orders.filter(o=>!['Delivered','Cancelled'].includes(o.status)).length;$('actions').innerHTML=`<div class="item">🧾 Pending orders <b>${pending}</b></div><div class="item">📦 Products low on stock <b>${products.filter(p=>p.stock<=3).length}</b></div>`;$('recent').innerHTML=orders.slice(0,5).map(o=>`<div class="item"><div class="row"><b>${esc(o.name)}</b><b>${money(o.total)}</b></div><div class="muted">${esc(o.product)} • ${o.status}</div></div>`).join('')||'<div class="empty">এখনও কোনো order নেই</div>';refreshProductSelect();renderOrders();renderCustomers();renderProducts()}
+$('orderSearch').addEventListener('input',renderOrders);$('customerSearch').addEventListener('input',renderCustomers);
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(b.dataset.page).classList.add('active');document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}));
+render();
+})()
+</script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{})); }</script>
+</body>
+</html>
